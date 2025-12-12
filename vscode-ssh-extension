@@ -1,0 +1,8 @@
+vscode ssh extension:
+Remote - SSH
+
+config file:
+Host yyy.yyy.yyy.yyy
+  HostName yyy.yyy.yyy.yyy
+  User ec2-user
+  IdentityFile C:\Users\xxxx\Downloads\KEY-moshe.pem
