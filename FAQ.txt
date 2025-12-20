@@ -1,0 +1,2 @@
+#insert to root in AWS Linux :
+sudo -i
