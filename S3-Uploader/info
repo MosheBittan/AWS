@@ -1,0 +1,50 @@
+Retrieve access keys
+Access key:		YYYYYYYYYYYYYYYYYY
+Secret access key:	XXXXXXXXXXXXXXXXXXXXX
+Bucket Name:		amzn-moshe-s3-demo
+
+arn:aws:s3:::amzn-NNNNN-s3-demo
+taskkill /F /IM vmtoolsd.exe
+taskkill /F /IM vmtoolsd.exe
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::amzn-moshe-s3-demo/*"
+        }
+    ]
+}
+
+################
+
+python3 -m venv venv
+source venv/bin/activate
+
+mkdir s3-uploader
+cd s3-uploader
+pip install flask boto3 python-dotenv
+
+
+file:	.env
+content:	
+AWS_ACCESS_KEY_ID=YYYYYYYYYYYYYYYY
+AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXX
+S3_BUCKET_NAME=amzn-NNNNNNNNNNN-s3-demo
+S3_REGION=eu-north-1
+
+
+Step 1: Generate the Keys
+openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
+
+Step 2: Install pyopenssl
+pip install pyopenssl
+
+Step 3: Update app.py
+if __name__ == '__main__':
+    # Add ssl_context with your cert and key
+    app.run(host='0.0.0.0', port=5000, debug=False, ssl_context=('cert.pem', 'key.pem'))
