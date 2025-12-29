@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud File Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-hover: #5649c0;
+            --delete-color: #ff7675;
+            --delete-hover: #d63031;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: #ffffff;
+            --text-color: #2d3436;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-color);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        header h1 { font-size: 2.5rem; font-weight: 600; margin-bottom: 10px; }
+        header p { opacity: 0.9; font-weight: 300; }
+
+        /* Flash Messages */
+        .flash-container { margin-bottom: 20px; }
+        .flash-msg {
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        .flash-msg.error { border-left: 5px solid var(--delete-color); color: #c0392b; }
+        .flash-msg.success { border-left: 5px solid #00b894; color: #00947e; }
+
+        /* Upload Card */
+        .upload-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .upload-card:hover { transform: translateY(-2px); }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        input[type="file"] {
+            display: none; /* Hide default ugly input */
+        }
+        
+        .custom-file-upload {
+            border: 2px dashed #dfe6e9;
+            display: inline-block;
+            padding: 20px 40px;
+            cursor: pointer;
+            border-radius: 10px;
+            width: 100%;
+            color: #636e72;
+            transition: all 0.3s;
+        }
+        .custom-file-upload:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+        .custom-file-upload i { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+        .btn-upload {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+        .btn-upload:hover { background-color: var(--primary-hover); }
+        .btn-upload:active { transform: scale(0.98); }
+
+        /* File List */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .file-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            overflow: hidden;
+        }
+        
+        .file-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            background: #f0f3ff;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 130px;
+            color: #2d3436;
+            text-decoration: none;
+        }
+        .file-name:hover { color: var(--primary-color); text-decoration: underline; }
+
+        .btn-delete {
+            background: #ffecec;
+            color: var(--delete-color);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-delete:hover {
+            background: var(--delete-color);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1><i class="fab fa-aws"></i> S3 Cloud Storage</h1>
+        <p>Securely upload and manage your files in the cloud</p>
+    </header>
+
+    <div class="flash-container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-msg {% if 'Error' in message %}error{% else %}success{% endif %}">
+                        <i class="fas {% if 'Error' in message %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="upload-card">
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <label for="file-upload" class="custom-file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="file-label">Choose a file or drag it here</span>
+                </label>
+                <input id="file-upload" type="file" name="file" required onchange="updateFileName()">
+            </div>
+            <button type="submit" class="btn-upload">Upload to S3</button>
+        </form>
+    </div>
+
+    {% if files %}
+        <h3 style="color: white; margin-bottom: 20px; font-weight: 400;">Your Files ({{ files|length }})</h3>
+        <div class="file-grid">
+        {% for file in files %}
+            <div class="file-card">
+                <div class="file-info">
+                    <div class="file-icon">
+                        {% if file.key.endswith(('.png', '.jpg', '.jpeg', '.gif')) %}
+                            <i class="fas fa-image"></i>
+                        {% elif file.key.endswith('.pdf') %}
+                            <i class="fas fa-file-pdf"></i>
+                        {% else %}
+                            <i class="fas fa-file-alt"></i>
+                        {% endif %}
+                    </div>
+                    <a href="{{ file.url }}" target="_blank" class="file-name" title="{{ file.key }}">
+                        {{ file.key }}
+                    </a>
+                </div>
+                
+                <form action="/delete" method="post" onsubmit="return confirm('Delete {{ file.key }} permanently?');">
+                    <input type="hidden" name="key" value="{{ file.key }}">
+                    <button type="submit" class="btn-delete" title="Delete File">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
+            <p>No files uploaded yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function updateFileName() {
+        const input = document.getElementById('file-upload');
+        const label = document.getElementById('file-label');
+        if(input.files && input.files.length > 0) {
+            label.textContent = input.files[0].name;
+            label.style.color = '#6c5ce7';
+            label.style.fontWeight = 'bold';
+        }
+    }
+</script>
+
+</body>
+</html>
