@@ -12,11 +12,11 @@ After=network.target
 User=ec2-user
 Group=ec2-user
 
-# Path to the folder containing app.py
+# Path to the folder containing stress.py
 WorkingDirectory=/home/ec2-user
 
 # Command to start the app (ensure full path to python3)
-ExecStart=/usr/bin/python3 /home/ec2-user/app.py
+ExecStart=/usr/bin/python3 /home/ec2-user/stress.py
 
 # Auto-restart if it crashes
 Restart=always
