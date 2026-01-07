@@ -1,0 +1,32 @@
+sudo yum install python3-pip -y
+sudo pip3 install flask psutil
+
+sudo nano /etc/systemd/system/stress-gui.service
+####Service Config#####
+[Unit]
+Description=CPU Stress Web GUI
+After=network.target
+
+[Service]
+# User to run the script (matches your screenshot)
+User=ec2-user
+Group=ec2-user
+
+# Path to the folder containing app.py
+WorkingDirectory=/home/ec2-user
+
+# Command to start the app (ensure full path to python3)
+ExecStart=/usr/bin/python3 /home/ec2-user/app.py
+
+# Auto-restart if it crashes
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+#############################
+sudo systemctl daemon-reload
+sudo systemctl enable stress-gui.service
+sudo systemctl start stress-gui.service
+sudo systemctl status stress-gui.service
+sudo systemctl restart stress-gui.service
