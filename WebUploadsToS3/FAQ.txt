@@ -1,0 +1,37 @@
+sudo yum install python3-pip -y
+pip3 install boto3
+pip install flask boto3 requests
+
+app.py
+
+
+automation:
+sudo nano /etc/systemd/system/upload-gui.service
+####Service Config#####
+[Unit]
+Description=WebGUI Uploads File to S3
+After=network.target
+
+[Service]
+# User to run the script (matches your screenshot)
+User=ec2-user
+Group=ec2-user
+
+# Path to the folder containing stress.py
+WorkingDirectory=/home/ec2-user
+
+# Command to start the app (ensure full path to python3)
+ExecStart=/usr/bin/python3 /home/ec2-user/app.py
+
+# Auto-restart if it crashes
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+#############################
+sudo systemctl daemon-reload
+sudo systemctl enable upload-gui.service
+sudo systemctl start upload-gui.service
+sudo systemctl status upload-gui.service
+sudo systemctl restart upload-gui.service
