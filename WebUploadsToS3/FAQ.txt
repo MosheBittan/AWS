@@ -35,3 +35,6 @@ sudo systemctl enable upload-gui.service
 sudo systemctl start upload-gui.service
 sudo systemctl status upload-gui.service
 sudo systemctl restart upload-gui.service
+
+Debug:
+sudo journalctl -u upload-gui.service -e
